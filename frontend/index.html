@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Support Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="page">
+    <div class="chat-wrap">
+
+      <div class="chat-header">
+        <div class="header-left">
+          <div class="logo-ring">
+            <div class="logo-inner">🛒</div>
+          </div>
+          <div>
+            <div class="bot-name">Support Assistant</div>
+            <div class="bot-status"><span class="dot"></span>Online — replies instantly</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="messages" id="messages">
+        <div class="date-divider">Today</div>
+        <div class="msg-row bot">
+          <div class="avatar-sm">🛒</div>
+          <div class="msg-col">
+            <div class="bubble bot">
+              Hi! I am your support assistant. I can help with orders, returns, payments, and more. What can I help you with today?
+            </div>
+            <div class="msg-time">Just now</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chips" id="chips">
+        <button class="chip" onclick="ask('How can I create an account?')">Create account</button>
+        <button class="chip" onclick="ask('What payment methods do you accept?')">Payments</button>
+        <button class="chip" onclick="ask('How do I track my order?')">Track order</button>
+        <button class="chip" onclick="ask('What is your return policy?')">Returns</button>
+      </div>
+
+      <div class="composer">
+        <input
+          type="text"
+          id="userInput"
+          class="composer-input"
+          placeholder="Ask me anything..."
+          onkeydown="if(event.key==='Enter')sendMessage()"
+          autocomplete="off"
+        />
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()" aria-label="Send message">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </div>
+
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
