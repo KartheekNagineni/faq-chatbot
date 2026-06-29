@@ -1,4 +1,4 @@
-const API_URL = "https://faq-chatbot-cepk.onrender.com";
+const API_URL = "http://127.0.0.1:8000/api/chat";
 let history = [];
 
 function getTime() {
