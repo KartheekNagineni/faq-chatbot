@@ -13,54 +13,57 @@ DATASET_PATH = os.path.join(
     "Ecommerce_FAQ_Chatbot_dataset.json"
 )
 
+with open(DATASET_PATH, encoding="utf-8") as f:
+    data = json.load(f)
 
-def load_dataset():
-    with open(DATASET_PATH, encoding="utf-8") as f:
-        data = json.load(f)
-
-    faqs = data["questions"]
-    print(f"Loaded {len(faqs)} FAQs from dataset")
-    return faqs
+FAQS = data["questions"]
 
 
-FAQS = load_dataset()
+def search_faq(question):
+
+    question = question.lower()
+
+    results = []
+
+    for faq in FAQS:
+
+        text = (faq["question"] + " " + faq["answer"]).lower()
+
+        score = 0
+
+        for word in question.split():
+            if word in text:
+                score += 1
+
+        if score > 0:
+            results.append((score, faq))
+
+    results.sort(reverse=True, key=lambda x: x[0])
+
+    return [faq for _, faq in results[:5]]
 
 
-def build_faq_text():
-    return "\n\n".join(
-        [
-            f"Q: {faq['question']}\nA: {faq['answer']}"
-            for faq in FAQS
-        ]
-    )
+async def get_answer(user_question, history):
 
+    faqs = search_faq(user_question)
 
-FAQ_TEXT = build_faq_text()
+    faq_text = ""
 
+    for faq in faqs:
 
-async def get_answer(user_question: str, history: list) -> str:
+        faq_text += f"Q: {faq['question']}\n"
+        faq_text += f"A: {faq['answer']}\n\n"
 
     messages = [
         {
             "role": "system",
-            "content": f"""
-You are an e-commerce customer support assistant.
-
-Rules:
-- Answer ONLY from the FAQ knowledge below.
-- Be short and helpful.
-- If the answer is not available, reply:
-'I do not have that information. Please contact support.'
-
-FAQ Knowledge Base:
-
-{FAQ_TEXT}
-"""
+            "content":
+            "Answer ONLY using the FAQ below.\n\n"
+            + faq_text
         }
     ]
 
-    for msg in history[-6:]:
-        messages.append(msg)
+    messages.extend(history[-2:])
 
     messages.append(
         {
@@ -69,30 +72,16 @@ FAQ Knowledge Base:
         }
     )
 
-    try:
-
-        response = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
-            messages=messages,
-            temperature=0,
-            max_tokens=300,
-        )
-
-        answer = response.choices[0].message.content.strip()
-
-        print("Question:", user_question)
-        print("Answer:", answer)
-
-        return answer
-
-    except Exception as e:
-
-        print("Groq Error:", str(e))
-
-        return "Sorry, I encountered an error while processing your request."
     response = client.chat.completions.create(
+
         model="llama-3.1-8b-instant",
+
         messages=messages,
-        max_tokens=300
+
+        temperature=0,
+
+        max_tokens=80
+
     )
+
     return response.choices[0].message.content.strip()
