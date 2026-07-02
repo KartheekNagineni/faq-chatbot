@@ -1,10 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import List
 from services.chat import get_answer
-import os
 
 app = FastAPI(title="FAQ Chatbot")
 
@@ -24,16 +22,27 @@ class ChatRequest(BaseModel):
     question: str
     history: List[Message] = []
 
-@app.post("/api/chat")
-async def chat(req: ChatRequest):
-    history = [{"role": m.role, "content": m.content} for m in req.history]
-    answer = await get_answer(req.question, history)
-    return {"answer": answer}
+@app.get("/")
+def root():
+    return {"message": "FAQ Chatbot API Running"}
 
 @app.get("/health")
 def health():
     return {"status": "running"}
 
-frontend_path = os.path.join(os.path.dirname(__file__), "frontend")
-if os.path.exists(frontend_path):
-    app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
+@app.post("/api/chat")
+async def chat(req: ChatRequest):
+
+    history = [
+        {
+            "role": m.role,
+            "content": m.content
+        }
+        for m in req.history
+    ]
+
+    answer = await get_answer(req.question, history)
+
+    return {
+        "answer": answer
+    }
