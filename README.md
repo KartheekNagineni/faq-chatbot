@@ -79,7 +79,7 @@ faq-chatbot/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/faq-chatbot.git
+git clone https://github.com/KartheekNagineni/faq-chatbot.git
 cd faq-chatbot/backend
 ```
 
